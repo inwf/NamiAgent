@@ -1,7 +1,7 @@
 """web/app.py —— NamiAgent 本地网页端：在浏览器里看 Agent 的每一步
 
-    python web/app.py            # 用真实模型（需要 API_KEY，同命令行版）
-    python web/app.py --demo     # 演示模式：脚本化的假模型，不需要 API Key
+    uv run --env-file .env python web/app.py  # 用真实模型（先在 .env 填写 API_KEY）
+    uv run python web/app.py --demo     # 演示模式：脚本化的假模型，不需要 API Key
 
 然后打开 http://localhost:8765
 
@@ -32,8 +32,7 @@ parser.add_argument("--lesson", default=os.environ.get("NAMI_LESSON", "lesson-11
                     help="用哪一课的 Agent（默认 lesson-11）")
 ARGS = parser.parse_args()
 
-if ARGS.demo:   # 演示模式：工作区和状态目录都放到临时目录，不碰你的文件
-    os.environ["NAMI_WORKSPACE"] = tempfile.mkdtemp(prefix="nami-demo-ws-")
+if ARGS.demo:   # 演示模式使用配置的工作区，会话状态放在临时目录。
     os.environ["NAMI_STATE_DIR"] = tempfile.mkdtemp(prefix="nami-demo-state-")
     os.environ.setdefault("API_KEY", "demo")
 
@@ -162,7 +161,15 @@ _busy = threading.Lock()
 
 def new_session():
     global SESSION
+    (WORKSPACE / "generated").mkdir(parents=True, exist_ok=True)
     SESSION = agent.Session("web", ask=web_ask)
+    output_rule = (
+        "\n\n[生成文件约定]\n"
+        "新生成的示例程序、临时文件和运行输出默认放到工作区的 generated/ 目录。"
+        "执行命令时使用实际的 generated/ 路径。用户明确指定编辑项目源码、练习或笔记时，按用户指定路径操作。"
+    )
+    if output_rule not in SESSION.messages[0]["content"]:
+        SESSION.messages[0]["content"] += output_rule
     return SESSION
 
 
@@ -291,10 +298,10 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     global CLIENT
-    try:
-        CLIENT = make_client()
-    except KeyError:
-        sys.exit("缺少 API_KEY。先 export API_KEY=你的模型密钥，或者用 --demo 先看看效果。")
+    if not ARGS.demo and not os.environ.get("API_KEY", "").strip():
+        sys.exit("缺少 API_KEY。请在仓库根目录的 .env 中填写 API_KEY，再运行 "
+                 "uv run --env-file .env python web/app.py；或者用 --demo 先看看效果。")
+    CLIENT = make_client()
     if not ARGS.demo and hasattr(agent, "mcp_client"):
         agent.mcp_client.load_servers()      # 第 8 课：和命令行版一样，先接入 MCP
     new_session()

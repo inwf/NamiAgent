@@ -1,0 +1,18 @@
+[project]
+name = "namiagent"
+version = "0.1.0"
+description = "零基础入门 AI Agent 的基础教程，自带本地网页端"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "openai>=1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+]
+
+[tool.uv]
+# 各课都是独立运行的代码快照，只管理依赖，不将仓库安装为 Python 包。
+package = false

@@ -13,11 +13,11 @@ from openai.types.chat import ChatCompletionMessage
 SCRIPT = [
     ("用户让我做一件事，但我还不知道工作区里有什么。先列一下目录，再决定怎么做。",
      "list_dir", {"path": "."}),
-    ("工作区是空的（或者没有 hello.py）。写一个最小的 Python 脚本来演示：打印一句话，再算一个简单的数。",
-     "write_file", {"path": "hello.py",
+    ("把演示生成的程序写到 generated/hello.py，便于和手写代码分开：打印一句话，再算一个简单的数。",
+     "write_file", {"path": "generated/hello.py",
                     "content": 'print("你好，我是 NamiAgent")\nprint("1 + 2 + ... + 100 =", sum(range(1, 101)))\n'}),
     ("文件写好了。光写不跑不算完成，用 shell 运行一下，确认输出是对的。",
-     "run_shell", {"command": "python3 hello.py"}),
+     "run_shell", {"command": "python3 generated/hello.py"}),
 ]
 
 
@@ -40,7 +40,7 @@ class DemoClient:
         tool_msgs = [m for m in messages[start:] if m["role"] == "tool"]
 
         if tools is None:                            # 第 4 课的压缩摘要
-            msg = {"role": "assistant", "content": "（演示模式的摘要）之前在工作区写了 hello.py 并运行过。"}
+            msg = {"role": "assistant", "content": "（演示模式的摘要）之前在 generated/hello.py 写了程序并运行过。"}
         elif step < len(SCRIPT) and not any(m["content"].startswith("[权限拒绝]") for m in tool_msgs):
             thought, name, args = SCRIPT[step]
             msg = {"role": "assistant", "content": None, "reasoning_content": thought,
@@ -54,7 +54,7 @@ class DemoClient:
                 thought = "用户拒绝了操作。不能重试同一件事，应该停下来说明情况。"
             else:
                 out = tool_msgs[-1]["content"].strip() if tool_msgs else ""
-                text = f"搞定了：在工作区写了 hello.py 并运行，输出是：\n\n{out}"
+                text = f"搞定了：生成了 generated/hello.py 并运行，输出是：\n\n{out}"
                 thought = "运行结果符合预期，任务完成，不需要再调用工具了，直接汇报。"
             msg = {"role": "assistant", "content": text, "reasoning_content": thought}
 

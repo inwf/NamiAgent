@@ -1,17 +1,46 @@
+# Python 虚拟环境与缓存
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .venv/
 venv/
+.uv-cache/
+
+# 构建产物与测试报告
+build/
+dist/
+*.egg-info/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# 本地密钥配置；空白模板需要提交
+.env
+.env.*
+.envrc
+!.env.example
+
+# NamiAgent 本地状态与根目录的网页演示产物
+agent-workspace/
+.nami-agent/
+generated/
+/hello.py
+
+# 系统、编辑器与运行日志
 .DS_Store
+.idea/
+*.swp
+*.swo
+*~
+*.log
+
+# 模型文件与交互式演示缓存
 .ipynb_checkpoints/
 *.pt
 *.bin
 *.safetensors
 gradio_cached_examples/
 flagged/
-
-# NamiAgent
-.env
-agent-workspace/
-.nami-agent/

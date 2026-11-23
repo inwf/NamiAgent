@@ -11,15 +11,17 @@ jobs:
         python-version: ["3.10", "3.12"]
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
+      - uses: astral-sh/setup-uv@v7
         with:
+          version: "0.11.17"
           python-version: ${{ matrix.python-version }}
-      - run: pip install openai pytest
+          enable-cache: true
+      - run: uv sync --locked
       - name: 语法检查（全部 11 课 + 网页端）
-        run: python -m compileall -q lessons web
+        run: uv run --locked python -m compileall -q lessons web
       - name: 网页端冒烟测试（演示模式，不需要 API Key）
         run: |
-          python web/app.py --demo --port 8765 &
+          uv run --locked python web/app.py --demo --port 8765 &
           sleep 3
           curl -sf http://localhost:8765/api/state | grep -q lesson-11
           curl -sf http://localhost:8765/ | grep -q NamiAgent
@@ -28,7 +30,7 @@ jobs:
           for d in lessons/lesson-*; do
             if [ -d "$d/tests" ]; then
               echo "::group::$d"
-              (cd "$d" && python -m pytest -q) || exit 1
+              uv run --locked --directory "$d" python -m pytest -q || exit 1
               echo "::endgroup::"
             fi
           done
