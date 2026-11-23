@@ -28,14 +28,21 @@ agent-workspace/
 .nami-agent/
 generated/
 /hello.py
+/playground/
 
 # 系统、编辑器与运行日志
 .DS_Store
+._*
 .idea/
+.vscode/
 *.swp
 *.swo
 *~
 *.log
+
+# Claude Code 本地权限配置，每台机器不同
+.claude/settings.local.json
+.claude/*.local.json
 
 # 模型文件与交互式演示缓存
 .ipynb_checkpoints/

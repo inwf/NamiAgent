@@ -178,7 +178,9 @@ if __name__ == "__main__":
 
 ```bash
 mkdir playground && cd playground
-python agent.py "在当前目录创建 hello.py，打印 hello，并运行它"
+# python agent.py "在当前目录创建 hello.py，打印 hello，并运行它"
+
+uv run --env-file .env python practice/lesson-01/agent.py "读取 practice/lesson-01/agent.py，用三句话总结这个程序"
 ```
 
 你会看到类似这样的输出（示意，具体步骤取决于模型）：
