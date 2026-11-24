@@ -17,9 +17,9 @@
 
 ## 本课练习目标
 
-- [ ] 注册 `count_chars(text)` 工具，并验证它能通过统一执行器调用。
-- [ ] 写下关键函数、数据结构或设计关系。
-- [ ] 完成下面的理解、改动和验证记录。
+- [x] 注册 `count_chars(text)` 工具，并验证它能通过统一执行器调用。
+- [x] 写下关键函数、数据结构或设计关系。
+- [x] 完成下面的理解、改动和验证记录。
 
 ## 验证参考
 
@@ -34,9 +34,30 @@ uv run --directory practice/lesson-02 python -m pytest -q
 
 ## 学习理解
 
-- 本课解决的问题：
-- 关键函数与数据结构：
-- 用自己的话说明调用顺序或设计关系：
+一个 run 就是一次 loop
+
+通过装饰器（类比注解）注册 tools
+
+下面是装饰器语法：
+装饰器 = 「在函数定义时自动对它做一层包装」的语法糖。
+核心机制：@ 只是函数调用
+@deco
+def f():
+    ...
+完全等价于：
+def f():
+    ...
+f = deco(f)      # ← @ 就是把下面的函数当参数传进去，再用返回值覆盖同名变量
+就这么简单。@ 没有任何魔法，纯语法糖。
+
+
+@tool("read_file", "读取文件", _params(path="文件路径"))
+def read_file(path): ...
+等价于：
+def read_file(path): ...
+read_file = tool("read_file", "读取文件", _params(...))(read_file)
+\#            └────────── 先调用 tool ──────────┘ └── 再调用它返回的东西 ──┘
+
 
 ## 练习记录
 
@@ -49,14 +70,14 @@ uv run --directory practice/lesson-02 python -m pytest -q
 实际运行的命令或检查方式：
 
 ```text
-# 学习后填写
+uv run --directory practice/lesson-02 python -m pytest -q
 ```
 
 实际结果：
 
 ## 尚待理解的问题
 
--
+- 暂无
 
 ## 本课提交记录
 
