@@ -128,7 +128,7 @@ class PermissionManager:
         if not sys.stdin.isatty():
             # 非交互环境（管道、脚本）没有人可以确认，默认拒绝
             return "n", "当前是非交互环境，无法确认"
-        print(f"\n⚠️  Agent 想执行：{name}")
+        print(f"\n   Agent 想执行：{name}")
         print(render_call(name, args))
         options = "[y]允许 / [n]拒绝" + (" / [a]本次会话一直允许" if name in REMEMBERABLE else "")
         while True:

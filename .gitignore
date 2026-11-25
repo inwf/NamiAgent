@@ -51,3 +51,5 @@ generated/
 *.safetensors
 gradio_cached_examples/
 flagged/
+
+work/
